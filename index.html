@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <title>Калькулятор ипотеки и аренды | Сравнение, доходность, налоги</title>
+    <meta name="description" content="Бесплатный калькулятор недвижимости: расчёт ипотеки, аренды, доходности от сдачи, налогов. Сравнение ипотеки vs аренды в городах России.">
+    <meta name="keywords" content="калькулятор ипотеки, аренда или ипотека, доходность недвижимости, расчёт ипотеки онлайн, налог на имущество, сравнение городов">
+    <meta name="author" content="Realty Calc">
+    
+    <meta property="og:title" content="Калькулятор ипотеки и аренды">
+    <meta property="og:description" content="Сравните ипотеку и аренду, рассчитайте доходность от сдачи квартиры">
+    <meta property="og:type" content="website">
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "Калькулятор недвижимости",
+      "description": "Расчёт ипотеки, аренды, доходности и налогов",
+      "applicationCategory": "FinancialApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "RUB"
+      }
+    }
+    </script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #f0fdf4;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            padding: 28px 20px;
+            color: #1a1a1a;
+            min-height: 100vh;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        .card {
+            background: #ffffff;
+            border-radius: 24px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+        }
+        .header {
+    background: #ffffff;
+    padding: 32px 32px 24px 32px;
+    border-bottom: 1px solid #e5e7eb;
+}
+.header h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    letter-spacing: -0.3px;
+}
+.header p {
+    color: #4b5563;
+    font-size: 0.95rem;
+    margin-top: 8px;
+}
+        
+        .tabs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            padding: 0 24px;
+            background: #ffffff;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 14px 22px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #4b5563;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border-bottom: 3px solid transparent;
+        }
+        .tab-btn:hover {
+            color: #059669;
+            background: #ecfdf5;
+        }
+        .tab-btn.active {
+            color: #059669;
+            border-bottom: 3px solid #059669;
+            background: #ecfdf5;
+        }
+        .tab-content { display: none; padding: 28px 32px; background: #fff; }
+        .tab-content.active { display: block; }
+        
+        .city-panel {
+            background: #f9fafb;
+            border-radius: 20px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .params-panel {
+            background: #f9fafb;
+            border-radius: 20px;
+            padding: 20px 24px;
+            margin-bottom: 24px;
+            border: 1px solid #e5e7eb;
+        }
+        .params-title {
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 16px;
+            font-size: 0.85rem;
+        }
+        .params-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 16px;
+        }
+        .param-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+        .param-group label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #4b5563;
+            text-transform: uppercase;
+        }
+        .param-group select, .param-group input {
+            padding: 10px 12px;
+            border-radius: 12px;
+            border: 1px solid #d1d5db;
+            background: white;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        .param-group select:focus, .param-group input:focus {
+            outline: none;
+            border-color: #059669;
+            box-shadow: 0 0 0 2px rgba(5,150,105,0.1);
+        }
+        .price-update-btn {
+            background: #1a1a1a;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 40px;
+            font-weight: 500;
+            color: white;
+            cursor: pointer;
+            margin-top: 8px;
+            transition: 0.2s;
+            font-size: 0.75rem;
+        }
+        .price-update-btn:hover {
+            background: #059669;
+        }
+        
+        .city-search-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 18px;
+            align-items: flex-end;
+        }
+        .search-field { flex: 2; min-width: 180px; }
+        .search-field label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: #059669;
+            display: block;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+        .city-search-row select {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 14px;
+            border: 1px solid #d1d5db;
+            background: white;
+            font-size: 0.9rem;
+        }
+        .city-search-row select:focus {
+            outline: none;
+            border-color: #059669;
+            box-shadow: 0 0 0 3px rgba(5,150,105,0.15);
+        }
+        .city-stats { 
+            margin-top: 14px; 
+            font-size: 0.8rem; 
+            color: #4b5563; 
+            background: #ffffff; 
+            padding: 6px 16px; 
+            border-radius: 40px; 
+            display: inline-block;
+            border: 1px solid #e5e7eb;
+        }
+        .grid-2col {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+        }
+        .input-group { margin-bottom: 20px; }
+        .input-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #1a1a1a;
+            font-size: 0.85rem;
+            display: block;
+        }
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid #d1d5db;
+            background: white;
+            font-size: 0.95rem;
+        }
+        .input-group input:focus, .input-group select:focus {
+            border-color: #059669;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(5,150,105,0.15);
+        }
+        button.calc-btn {
+            background: #1a1a1a;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 40px;
+            font-weight: 700;
+            color: white;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: 0.2s;
+        }
+        button.calc-btn:hover { 
+            background: #059669;
+        }
+        .result-box {
+            background: #f9fafb;
+            border-radius: 24px;
+            padding: 24px;
+            border: 1px solid #e5e7eb;
+        }
+        .result-title {
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 18px;
+            border-left: 4px solid #059669;
+            padding-left: 14px;
+            color: #1a1a1a;
+        }
+        .verdict-card {
+            background: #ecfdf5;
+            border-radius: 20px;
+            padding: 18px;
+            margin-top: 18px;
+            border-left: 4px solid #059669;
+            font-weight: 500;
+        }
+        .share-btn {
+            background: #1a1a1a;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+        }
+        .share-btn:hover {
+            background: #059669;
+        }
+        .table-wrapper { overflow-x: auto; margin-top: 8px; }
+        .city-table {
+            width: 100%;
+            min-width: 500px;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .city-table th, .city-table td {
+            padding: 14px 12px;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .city-table th { 
+            background: #1a1a1a;
+            font-weight: 700; 
+            color: white;
+        }
+        .positive-bg {
+            background: #d1fae5;
+            color: #065f46;
+            border-radius: 24px;
+            padding: 4px 12px;
+            display: inline-block;
+            font-weight: 700;
+        }
+        .payment-schedule {
+            margin-top: 20px;
+            font-size: 0.75rem;
+            background: #ecfdf5;
+            padding: 12px;
+            border-radius: 16px;
+            border-left: 3px solid #059669;
+        }
+        
+        .faq-section {
+            background: #f9fafb;
+            padding: 28px 32px;
+            border-top: 1px solid #e5e7eb;
+        }
+        .faq-section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: #1a1a1a;
+            font-weight: 700;
+        }
+        .faq-item {
+            margin-bottom: 12px;
+            border-radius: 16px;
+            overflow: hidden;
+            background: #ffffff;
+            border: 1px solid #e5e7eb;
+        }
+        .faq-question {
+            padding: 18px 20px;
+            cursor: pointer;
+            font-weight: 700;
+            color: #1a1a1a;
+            background: #ffffff;
+            transition: all 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .faq-question:hover {
+            background: #ecfdf5;
+        }
+        .faq-question::after {
+            content: "▼";
+            font-size: 0.7rem;
+            color: #9ca3af;
+            transition: transform 0.2s;
+        }
+        .faq-item.active .faq-question::after {
+            transform: rotate(180deg);
+        }
+        .faq-answer {
+            padding: 0 20px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            color: #4b5563;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+        .faq-item.active .faq-answer {
+            padding: 0 20px 18px 20px;
+            max-height: 300px;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .footer {
+            background: #f9fafb;
+            padding: 24px 32px 20px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: #6b7280;
+            border-top: 1px solid #e5e7eb;
+        }
+        .empty-placeholder {
+            color: #9ca3af;
+            text-align: center;
+            padding: 20px;
+            font-style: italic;
+        }
+        .demo-hint {
+            font-size: 0.7rem;
+            color: #6b7280;
+            text-align: center;
+            margin-top: 12px;
+        }
+        
+        @media (max-width: 640px) {
+            .tab-content { padding: 20px; }
+            .header h1 { font-size: 1.4rem; }
+            .tabs { gap: 2px; }
+            .tab-btn { padding: 10px 12px; font-size: 0.7rem; }
+            .params-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="card">
+        <div class="header">
+            <h1>Калькулятор ипотеки и аренды: сравнение, доходность, налоги — 85+ городов РФ</h1>
+            <p>Выберите город и параметры квартиры для точного расчёта</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="tabMortgage">Ипотека</button>
+            <button class="tab-btn" data-tab="tabRentCalc">Аренда</button>
+            <button class="tab-btn" data-tab="tab1">Ипотека vs Аренда</button>
+            <button class="tab-btn" data-tab="tab2">Доходность</button>
+            <button class="tab-btn" data-tab="tab3">Налоги</button>
+            <button class="tab-btn" data-tab="tab4">Сравнить города</button>
+            <button class="tab-btn" data-tab="tab5">Топ инвестора</button>
+        </div>
+
+        <!-- Вкладка Ипотека -->
+        <div id="tabMortgage" class="tab-content active">
+            <div class="city-panel">
+                <div class="city-search-row">
+                    <div class="search-field"><label>Выберите город</label><select id="citySelectMort"><option value="" selected disabled>-- Выберите город --</option></select></div>
+                </div>
+                <div class="city-stats" id="cityStatsMort"></div>
+            </div>
+            
+            <div class="params-panel">
+                <div class="params-title">Параметры квартиры</div>
+                <div class="params-grid">
+                    <div class="param-group">
+                        <label>Тип квартиры</label>
+                        <select id="flatTypeMort">
+                            <option value="studio">Студия</option>
+                            <option value="1room" selected>1-комнатная</option>
+                            <option value="2room">2-комнатная</option>
+                            <option value="3room">3-комнатная</option>
+                        </select>
+                    </div>
+                    <div class="param-group">
+                        <label>Район</label>
+                        <select id="districtMort">
+                            <option value="center">Центр</option>
+                            <option value="midtown" selected>Средний</option>
+                            <option value="outskirts">Спальный</option>
+                        </select>
+                    </div>
+                    <div class="param-group">
+                        <label>Этаж</label>
+                        <select id="floorMort">
+                            <option value="low">1-3 этаж</option>
+                            <option value="middle" selected>4-8 этаж</option>
+                            <option value="high">9+ этаж</option>
+                        </select>
+                    </div>
+                    <div class="param-group">
+                        <label>Состояние</label>
+                        <select id="conditionMort">
+                            <option value="rough">Без отделки</option>
+                            <option value="standard" selected>Стандарт</option>
+                            <option value="renovated">Евроремонт</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="price-update-btn" id="updatePriceMort">Применить параметры</button>
+            </div>
+            
+            <div class="grid-2col">
+                <div>
+                    <div class="input-group"><label>Стоимость квартиры (руб)</label><input type="number" id="mortPrice" placeholder="Введите цену"></div>
+                    <div class="input-group"><label>Первоначальный взнос (руб)</label><input type="number" id="mortDown" placeholder="Например: 1500000"></div>
+                    <div class="input-group"><label>Срок ипотеки (лет)</label><input type="number" id="mortYears" placeholder="Например: 20"></div>
+                    <div class="input-group"><label>Процентная ставка (%)</label><input type="number" id="mortRate" step="0.1" placeholder="Например: 18.5"></div>
+                    <button class="calc-btn" id="calcMortDetail">Рассчитать ипотеку</button>
+                </div>
+                <div class="result-box"><div class="result-title">График платежей и переплата</div><div id="mortOutput"><div class="empty-placeholder">Выберите город, параметры и нажмите "Рассчитать"</div></div></div>
+            </div>
+        </div>
+
+        <!-- Вкладка Аренда -->
+        <div id="tabRentCalc" class="tab-content">
+            <div class="city-panel">
+                <div class="city-search-row">
+                    <div class="search-field"><label>Выберите город</label><select id="citySelectRentDetail"><option value="" selected disabled>-- Выберите город --</option></select></div>
+                </div>
+                <div class="city-stats" id="cityStatsRentDetail"></div>
+            </div>
+            
+            <div class="params-panel">
+                <div class="params-title">Параметры квартиры</div>
+                <div class="params-grid">
+                    <div class="param-group">
+                        <label>Тип квартиры</label>
+                        <select id="flatTypeRent">
+                            <option value="studio">Студия</option>
+                            <option value="1room" selected>1-комнатная</option>
+                            <option value="2room">2-комнатная</option>
+                            <option value="3room">3-комнатная</option>
+                        </select>
+                    </div>
+                    <div class="param-group">
+                        <label>Район</label>
+                        <select id="districtRent">
+                            <option value="center">Центр</option>
+                            <option value="midtown" selected>Средний</option>
+                            <option value="outskirts">Спальный</option>
+                        </select>
+                    </div>
+                    <div class="param-group">
+                        <label>Состояние</label>
+                        <select id="conditionRent">
+                            <option value="rough">Без отделки</option>
+                            <option value="standard" selected>Стандарт</option>
+                            <option value="renovated">Евроремонт</option>
+                        </select>
+                    </div>
+                    <div class="param-group">
+                        <label>Мебель</label>
+                        <select id="furnitureRent">
+                            <option value="no">Без мебели</option>
+                            <option value="partial" selected>Частично</option>
+                            <option value="full">Полностью</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="price-update-btn" id="updatePriceRent">Применить параметры</button>
+            </div>
+            
+            <div class="grid-2col">
+                <div>
+                    <div class="input-group"><label>Арендная ставка (руб/мес)</label><input type="number" id="rentMonthlyDetail" placeholder="Введите аренду"></div>
+                    <div class="input-group"><label>Ежегодный рост аренды (%)</label><input type="number" id="rentGrowthDetail" step="0.1" placeholder="Например: 3.5"></div>
+                    <div class="input-group"><label>Коммунальные + доп. расходы (руб/мес)</label><input type="number" id="utilsDetail" placeholder="Например: 4000"></div>
+                    <div class="input-group"><label>Период аренды (лет)</label><input type="number" id="rentPeriodDetail" placeholder="Например: 5"></div>
+                    <button class="calc-btn" id="calcRentDetail">Прогноз затрат на аренду</button>
+                </div>
+                <div class="result-box"><div class="result-title">Прогноз расходов за период</div><div id="rentDetailOutput"><div class="empty-placeholder">Заполните данные слева и нажмите "Прогноз"</div></div></div>
+            </div>
+        </div>
+
+        <!-- Вкладка Ипотека vs Аренда -->
+        <div id="tab1" class="tab-content">
+            <div class="city-panel">
+                <div class="city-search-row">
+                    <div class="search-field"><label>Выберите город</label><select id="citySelect1"><option value="" selected disabled>-- Выберите город --</option></select></div>
+                </div>
+                <div class="city-stats" id="cityStats1"></div>
+            </div>
+            
+            <div class="params-panel">
+                <div class="params-title">Параметры квартиры</div>
+                <div class="params-grid">
+                    <div class="param-group">
+                        <label>Тип квартиры</label>
+                        <select id="flatTypeVs">
+                            <option value="studio">Студия</option>
+                            <option value="1room" selected>1-комнатная</option>
+                            <option value="2room">2-комнатная</option>
+                            <option value="3room">3-комнатная</option>
+                        </select>
+                    </div>
+                    <div class="param-group">
+                        <label>Район</label>
+                        <select id="districtVs">
+                            <option value="center">Центр</option>
+                            <option value="midtown" selected>Средний</option>
+                            <option value="outskirts">Спальный</option>
+                        </select>
+                    </div>
+                    <div class="param-group">
+                        <label>Этаж</label>
+                        <select id="floorVs">
+                            <option value="low">1-3 этаж</option>
+                            <option value="middle" selected>4-8 этаж</option>
+                            <option value="high">9+ этаж</option>
+                        </select>
+                    </div>
+                    <div class="param-group">
+                        <label>Состояние</label>
+                        <select id="conditionVs">
+                            <option value="rough">Без отделки</option>
+                            <option value="standard" selected>Стандарт</option>
+                            <option value="renovated">Евроремонт</option>
+                        </select>
+                    </div>
+                </div>
+                <button class="price-update-btn" id="updatePriceVs">Применить параметры</button>
+            </div>
+            
+            <div class="grid-2col">
+                <div>
+                    <div class="input-group"><label>Стоимость квартиры (руб)</label><input type="number" id="price1" placeholder="Введите цену"></div>
+                    <div class="input-group"><label>Аренда в месяц (руб)</label><input type="number" id="rent1" placeholder="Введите аренду"></div>
+                    <div class="input-group"><label>Первоначальный взнос (руб)</label><input type="number" id="downPayment" placeholder="Например: 1500000"></div>
+                    <div class="input-group"><label>Срок ипотеки (лет)</label><input type="number" id="yearsLoan" placeholder="Например: 20"></div>
+                    <div class="input-group"><label>Ставка ипотеки (%)</label><input type="number" id="rateLoan" step="0.1" placeholder="Например: 18.5"></div>
+                    <div class="input-group"><label>Ставка по вкладу (%)</label><input type="number" id="depositRate" step="0.1" placeholder="Например: 13.2"></div>
+                    <button class="calc-btn" id="calcVS">Сравнить</button>
+                </div>
+                <div class="result-box"><div class="result-title">Результат сравнения</div><div id="vsOutput"><div class="empty-placeholder">Заполните данные слева и нажмите "Сравнить"</div></div></div>
+            </div>
+        </div>
+
+        <!-- Вкладка Доходность -->
+        <div id="tab2" class="tab-content">
+            <div class="city-panel">
+                <div class="city-search-row">
+                    <div class="search-field"><label>Город</label><select id="citySelect2"><option value="" selected disabled>-- Выберите город --</option></select></div>
+                </div>
+                <div class="city-stats" id="cityStats2"></div>
+            </div>
+            <div class="grid-2col">
+                <div>
+                    <div class="input-group"><label>Цена квартиры (руб)</label><input type="number" id="price2" placeholder="Введите цену"></div>
+                    <div class="input-group"><label>Аренда/мес (руб)</label><input type="number" id="rent2" placeholder="Введите аренду"></div>
+                    <div class="input-group"><label>Прогноз роста аренды (% в год)</label><input type="number" id="yieldGrowth" step="0.1" placeholder="Например: 3.5"></div>
+                    <div class="input-group"><label>Расходы на содержание (руб/год)</label><input type="number" id="expensesYear" placeholder="Например: 30000"></div>
+                    <div class="input-group"><label>Горизонт (лет)</label><input type="number" id="holdYears" placeholder="Например: 10"></div>
+                    <button class="calc-btn" id="calcYieldBtn">Рассчитать доходность</button>
+                </div>
+                <div class="result-box"><div class="result-title">Чистая прибыль и ROI</div><div id="yieldOutput"><div class="empty-placeholder">Заполните данные слева и нажмите "Рассчитать"</div></div></div>
+            </div>
+        </div>
+
+        <!-- Вкладка Налоги -->
+        <div id="tab3" class="tab-content">
+            <div class="city-panel">
+                <div class="city-search-row">
+                    <div class="search-field"><label>Город</label><select id="citySelect3"><option value="" selected disabled>-- Выберите город --</option></select></div>
+                </div>
+                <div class="city-stats" id="cityStats3"></div>
+            </div>
+            <div class="grid-2col">
+                <div>
+                    <div class="input-group"><label>Кадастровая стоимость (руб)</label><input type="number" id="cadastralPrice" placeholder="Введите кадастр"></div>
+                    <div class="input-group"><label>Годовой доход от аренды (руб)</label><input type="number" id="rentalIncomeYear" placeholder="Введите доход"></div>
+                    <div class="input-group"><label>Налоговый статус</label><select id="taxStatus"><option value="physical">Физлицо (НДФЛ 13%)</option><option value="self">Самозанятый (4-6%)</option><option value="ip">ИП (УСН 6%)</option></select></div>
+                    <div class="input-group"><label>Налог на имущество (% от кадастра)</label><input type="number" id="propTaxRate" step="0.05" placeholder="Например: 0.1"></div>
+                    <button class="calc-btn" id="calcTaxBtn">Рассчитать налоги</button>
+                </div>
+                <div class="result-box"><div class="result-title">Налоговая нагрузка</div><div id="taxOutput"><div class="empty-placeholder">Заполните данные слева и нажмите "Рассчитать"</div></div></div>
+            </div>
+        </div>
+
+        <!-- Вкладка Сравнить города -->
+        <div id="tab4" class="tab-content">
+            <div class="city-panel">
+                <div class="city-search-row">
+                    <div class="search-field"><label>Ваш бюджет (руб)</label><input type="number" id="budgetFilter" placeholder="Например: 7000000"></div>
+                </div>
+            </div>
+            <div class="table-wrapper">
+                <table class="city-table">
+                    <thead>
+                        <tr><th>Город</th><th>Средняя цена (млн руб)</th><th>Средняя аренда (руб/мес)</th><th>Доходность год</th><th>В бюджет</th>
+                    </thead>
+                    <tbody id="citiesTableBody"></tbody>
+                </table>
+            </div>
+            <div class="demo-hint">Введите бюджет для фильтрации</div>
+        </div>
+
+        <!-- Вкладка Топ инвестора -->
+        <div id="tab5" class="tab-content">
+            <div class="result-box">
+                <div class="result-title">Города с максимальной доходностью аренды (средние значения)</div>
+                <div id="investTopOutput"></div>
+            </div>
+        </div>
+        
+        <!-- FAQ аккордеон -->
+        <div class="faq-section">
+            <h3>Часто задаваемые вопросы</h3>
+            <div class="faq-item">
+                <div class="faq-question">Как рассчитывается средняя цена?</div>
+                <div class="faq-answer">Средняя цена — это базовая цена для 1-комнатной квартиры в спальном районе со стандартной отделкой. Вы можете изменить параметры квартиры в разделах "Ипотека", "Аренда" и "Ипотека vs Аренда" — цены пересчитаются автоматически с учётом коэффициентов.</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Какие коэффициенты применяются к цене?</div>
+                <div class="faq-answer">Цена умножается на коэффициенты: тип квартиры (студия 0.85, 2-комн 1.3, 3-комн 1.6), район (центр 1.4, спальный 0.8), этаж (1-3 этаж 0.9, высокий 1.1), состояние (евроремонт 1.25, без отделки 0.8).</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Какие коэффициенты применяются к аренде?</div>
+                <div class="faq-answer">Аренда умножается на коэффициенты: тип квартиры (студия 0.9, 2-комн 1.25, 3-комн 1.5), район (центр 1.6, спальный 0.85), состояние (евроремонт 1.4, без отделки 0.7), мебель (полностью 1.3, без мебели 0.85).</div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question">Почему аренда может быть выгоднее ипотеки?</div>
+                <div class="faq-answer">Если ставка по банковскому вкладу выше ипотечной, а цены на недвижимость не растут, то деньги от первоначального взноса выгоднее положить в банк, а не вкладывать в квартиру. Калькулятор это наглядно показывает.</div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>Средние цены указаны для 1-комнатной квартиры в спальном районе. Вы можете изменить параметры в разделах выше.<br>© 2026 Калькулятор недвижимости | Данные по 85+ городам РФ</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ========== БАЗА ДАННЫХ ГОРОДОВ ==========
+    const citiesDB = {
+        "Москва": { price: 12800000, rent: 58000 }, "Санкт-Петербург": { price: 9700000, rent: 44000 },
+        "Новосибирск": { price: 6900000, rent: 29000 }, "Екатеринбург": { price: 7300000, rent: 31000 },
+        "Казань": { price: 8000000, rent: 34000 }, "Нижний Новгород": { price: 7000000, rent: 30000 },
+        "Челябинск": { price: 5900000, rent: 25000 }, "Омск": { price: 5400000, rent: 22000 },
+        "Самара": { price: 6200000, rent: 26000 }, "Ростов-на-Дону": { price: 6600000, rent: 28000 },
+        "Уфа": { price: 6000000, rent: 25000 }, "Красноярск": { price: 6800000, rent: 29000 },
+        "Пермь": { price: 6200000, rent: 27000 }, "Воронеж": { price: 6300000, rent: 27000 },
+        "Волгоград": { price: 5700000, rent: 24000 }, "Краснодар": { price: 7200000, rent: 33000 },
+        "Сочи": { price: 11200000, rent: 52000 }, "Тюмень": { price: 7200000, rent: 32000 },
+        "Иркутск": { price: 6500000, rent: 28000 }, "Хабаровск": { price: 7000000, rent: 30000 },
+        "Владивосток": { price: 7800000, rent: 35000 }, "Калининград": { price: 6800000, rent: 31000 },
+        "Барнаул": { price: 5200000, rent: 22000 }, "Ижевск": { price: 5500000, rent: 23000 },
+        "Кемерово": { price: 5600000, rent: 23000 }, "Томск": { price: 6100000, rent: 26000 },
+        "Саратов": { price: 5300000, rent: 22000 }, "Тольятти": { price: 5200000, rent: 21000 },
+        "Липецк": { price: 5500000, rent: 23000 }, "Рязань": { price: 6000000, rent: 25000 },
+        "Пенза": { price: 5400000, rent: 22000 }, "Киров": { price: 5300000, rent: 21000 },
+        "Чебоксары": { price: 5600000, rent: 23000 }, "Тула": { price: 5900000, rent: 25000 },
+        "Белгород": { price: 6300000, rent: 27000 }, "Курск": { price: 5600000, rent: 23000 },
+        "Орёл": { price: 5400000, rent: 22000 }, "Смоленск": { price: 5700000, rent: 23000 },
+        "Магнитогорск": { price: 5200000, rent: 21000 }, "Наб.Челны": { price: 5500000, rent: 23000 },
+        "Ярославль": { price: 6200000, rent: 27000 }, "Владимир": { price: 5800000, rent: 24000 },
+        "Мурманск": { price: 6000000, rent: 28000 }, "Архангельск": { price: 5900000, rent: 26000 },
+        "Сыктывкар": { price: 5600000, rent: 24000 }, "Чита": { price: 5800000, rent: 25000 },
+        "Якутск": { price: 7600000, rent: 36000 }, "Петропавловск-Камчатский": { price: 8200000, rent: 39000 },
+        "Южно-Сахалинск": { price: 8500000, rent: 42000 }, "Махачкала": { price: 6200000, rent: 28000 },
+        "Грозный": { price: 6000000, rent: 27000 }, "Владикавказ": { price: 5800000, rent: 25000 },
+        "Нальчик": { price: 5500000, rent: 23000 }, "Ставрополь": { price: 6000000, rent: 26000 },
+        "Севастополь": { price: 7200000, rent: 33000 }, "Симферополь": { price: 6500000, rent: 29000 },
+        "Брянск": { price: 5500000, rent: 23000 }, "Тамбов": { price: 5400000, rent: 22000 },
+        "Иваново": { price: 5200000, rent: 21000 }, "Кострома": { price: 5300000, rent: 22000 },
+        "Калуга": { price: 6000000, rent: 26000 }, "Великий Новгород": { price: 5800000, rent: 25000 },
+        "Псков": { price: 5600000, rent: 23000 }, "Сургут": { price: 7000000, rent: 35000 },
+        "Нижневартовск": { price: 6700000, rent: 32000 }, "Новый Уренгой": { price: 7500000, rent: 38000 }
+    };
+
+    // Коэффициенты для цены
+    const priceCoeffs = {
+        flatType: { studio: 0.85, "1room": 1.0, "2room": 1.3, "3room": 1.6 },
+        district: { center: 1.4, midtown: 1.0, outskirts: 0.8 },
+        floor: { low: 0.9, middle: 1.0, high: 1.1 },
+        condition: { rough: 0.8, standard: 1.0, renovated: 1.25 }
+    };
+    
+    // Коэффициенты для аренды
+    const rentCoeffs = {
+        flatType: { studio: 0.9, "1room": 1.0, "2room": 1.25, "3room": 1.5 },
+        district: { center: 1.6, midtown: 1.0, outskirts: 0.85 },
+        condition: { rough: 0.7, standard: 1.0, renovated: 1.4 },
+        furniture: { no: 0.85, partial: 1.0, full: 1.3 }
+    };
+
+    let currentCityMort = null;
+    let currentCityRent = null;
+    let currentCityVs = null;
+
+    function calculatePrice(basePrice, params) {
+        let price = basePrice;
+        price *= priceCoeffs.flatType[params.flatType];
+        price *= priceCoeffs.district[params.district];
+        price *= priceCoeffs.floor[params.floor];
+        price *= priceCoeffs.condition[params.condition];
+        return Math.round(price);
+    }
+    
+    function calculateRent(baseRent, params) {
+        let rent = baseRent;
+        rent *= rentCoeffs.flatType[params.flatType];
+        rent *= rentCoeffs.district[params.district];
+        rent *= rentCoeffs.condition[params.condition];
+        rent *= rentCoeffs.furniture[params.furniture || "partial"];
+        return Math.round(rent);
+    }
+    
+    function updateMortPrice() {
+        if (!currentCityMort || !citiesDB[currentCityMort]) return;
+        const basePrice = citiesDB[currentCityMort].price;
+        const params = {
+            flatType: document.getElementById("flatTypeMort").value,
+            district: document.getElementById("districtMort").value,
+            floor: document.getElementById("floorMort").value,
+            condition: document.getElementById("conditionMort").value
+        };
+        const newPrice = calculatePrice(basePrice, params);
+        document.getElementById("mortPrice").value = newPrice;
+        document.getElementById("cityStatsMort").innerHTML = currentCityMort + ": цена " + newPrice.toLocaleString() + " руб";
+    }
+    
+    function updateRentPrice() {
+        if (!currentCityRent || !citiesDB[currentCityRent]) return;
+        const baseRent = citiesDB[currentCityRent].rent;
+        const params = {
+            flatType: document.getElementById("flatTypeRent").value,
+            district: document.getElementById("districtRent").value,
+            condition: document.getElementById("conditionRent").value,
+            furniture: document.getElementById("furnitureRent").value
+        };
+        const newRent = calculateRent(baseRent, params);
+        document.getElementById("rentMonthlyDetail").value = newRent;
+        document.getElementById("cityStatsRentDetail").innerHTML = currentCityRent + ": аренда " + newRent.toLocaleString() + " руб/мес";
+    }
+    
+    function updateVsPrices() {
+        if (!currentCityVs || !citiesDB[currentCityVs]) return;
+        const basePrice = citiesDB[currentCityVs].price;
+        const baseRent = citiesDB[currentCityVs].rent;
+        const params = {
+            flatType: document.getElementById("flatTypeVs").value,
+            district: document.getElementById("districtVs").value,
+            floor: document.getElementById("floorVs").value,
+            condition: document.getElementById("conditionVs").value
+        };
+        const newPrice = calculatePrice(basePrice, params);
+        const newRent = calculateRent(baseRent, {...params, furniture: "partial"});
+        document.getElementById("price1").value = newPrice;
+        document.getElementById("rent1").value = newRent;
+        document.getElementById("cityStats1").innerHTML = currentCityVs + ": цена " + newPrice.toLocaleString() + " руб, аренда " + newRent.toLocaleString() + " руб/мес";
+    }
+
+    function shareResult(text) {
+        if (navigator.share) {
+            navigator.share({
+                title: 'Результат расчёта недвижимости',
+                text: text,
+                url: window.location.href
+            }).catch(() => {});
+        } else {
+            navigator.clipboard.writeText(text);
+            alert('Результат скопирован в буфер обмена');
+        }
+    }
+
+    function populateSelects() {
+        const selectIds = ["citySelect1", "citySelect2", "citySelect3", "citySelectMort", "citySelectRentDetail"];
+        const citiesSorted = Object.keys(citiesDB).sort();
+        selectIds.forEach(id => {
+            const select = document.getElementById(id);
+            if (!select) return;
+            select.innerHTML = '<option value="" selected disabled>-- Выберите город --</option>';
+            citiesSorted.forEach(city => {
+                const option = document.createElement("option");
+                option.value = city;
+                option.textContent = city;
+                select.appendChild(option);
+            });
+        });
+    }
+
+    function setCityData(selectElement, type) {
+        const city = selectElement.value;
+        if (!city || !citiesDB[city]) return;
+        
+        if (type === 'mort') {
+            currentCityMort = city;
+            updateMortPrice();
+        } else if (type === 'rent') {
+            currentCityRent = city;
+            updateRentPrice();
+        } else if (type === 'vs') {
+            currentCityVs = city;
+            updateVsPrices();
+        } else if (type === 'simple2') {
+            const data = citiesDB[city];
+            document.getElementById("price2").value = data.price;
+            document.getElementById("rent2").value = data.rent;
+            document.getElementById("cityStats2").innerHTML = city + ": средняя цена " + (data.price/1e6).toFixed(1) + " млн руб";
+        } else if (type === 'simple3') {
+            const data = citiesDB[city];
+            document.getElementById("cadastralPrice").value = data.price;
+            document.getElementById("cityStats3").innerHTML = city + ": средняя кадастровая стоимость " + (data.price/1e6).toFixed(1) + " млн руб";
+        }
+    }
+
+    function bindSelections() {
+        document.getElementById("citySelectMort").addEventListener("change", (e) => setCityData(e.target, 'mort'));
+        document.getElementById("citySelectRentDetail").addEventListener("change", (e) => setCityData(e.target, 'rent'));
+        document.getElementById("citySelect1").addEventListener("change", (e) => setCityData(e.target, 'vs'));
+        document.getElementById("citySelect2").addEventListener("change", (e) => setCityData(e.target, 'simple2'));
+        document.getElementById("citySelect3").addEventListener("change", (e) => setCityData(e.target, 'simple3'));
+        
+        document.getElementById("updatePriceMort").addEventListener("click", updateMortPrice);
+        document.getElementById("updatePriceRent").addEventListener("click", updateRentPrice);
+        document.getElementById("updatePriceVs").addEventListener("click", updateVsPrices);
+    }
+
+    function mortgagePayment(principal, rate, years) {
+        const mr = rate / 100 / 12;
+        const months = years * 12;
+        if (mr === 0 || principal <= 0) return principal / months;
+        return principal * (mr * Math.pow(1 + mr, months)) / (Math.pow(1 + mr, months) - 1);
+    }
+
+    function runMortgageCalc() {
+        const price = parseFloat(document.getElementById("mortPrice").value);
+        const down = parseFloat(document.getElementById("mortDown").value);
+        const years = parseFloat(document.getElementById("mortYears").value);
+        const rate = parseFloat(document.getElementById("mortRate").value);
+        if (isNaN(price) || price <= 0 || isNaN(down) || isNaN(years) || years <= 0 || isNaN(rate)) {
+            document.getElementById("mortOutput").innerHTML = `<div class="empty-placeholder">Заполните все поля корректными числами</div>`;
+            return;
+        }
+        const loan = Math.max(0, price - down);
+        if (loan <= 0) {
+            document.getElementById("mortOutput").innerHTML = `<div class="empty-placeholder">Первоначальный взнос не может превышать стоимость квартиры</div>`;
+            return;
+        }
+        const payment = mortgagePayment(loan, rate, years);
+        const totalPayments = payment * years * 12;
+        const overpay = totalPayments - loan;
+        const resultText = "Ежемесячный платёж: " + Math.round(payment).toLocaleString() + " руб, Переплата: " + Math.round(overpay).toLocaleString() + " руб";
+        document.getElementById("mortOutput").innerHTML = `
+            <div><strong>Ежемесячный платёж:</strong> ${Math.round(payment).toLocaleString()} руб</div>
+            <div><strong>Общая сумма выплат:</strong> ${Math.round(totalPayments).toLocaleString()} руб</div>
+            <div><strong>Переплата по кредиту:</strong> ${Math.round(overpay).toLocaleString()} руб (${((overpay/loan)*100).toFixed(1)}%)</div>
+            <div class="payment-schedule">Аннуитетный график: ежемесячный платёж фиксированный — ${Math.round(payment).toLocaleString()} руб</div>
+            <button class="share-btn" onclick="shareResult('${resultText.replace(/'/g, "\\'")}')">Поделиться результатом</button>
+        `;
+    }
+
+    function runRentDetail() {
+        let rent = parseFloat(document.getElementById("rentMonthlyDetail").value);
+        const growth = parseFloat(document.getElementById("rentGrowthDetail").value);
+        const utils = parseFloat(document.getElementById("utilsDetail").value);
+        const years = parseFloat(document.getElementById("rentPeriodDetail").value);
+        if (isNaN(rent) || rent <= 0 || isNaN(growth) || isNaN(utils) || isNaN(years) || years <= 0) {
+            document.getElementById("rentDetailOutput").innerHTML = `<div class="empty-placeholder">Заполните все поля корректными числами</div>`;
+            return;
+        }
+        const growthRate = growth / 100;
+        let totalRent = 0, totalUtils = utils * 12 * years;
+        let curRent = rent;
+        for (let i=0; i<years; i++) { totalRent += curRent * 12; curRent *= (1+growthRate); }
+        const grandTotal = totalRent + totalUtils;
+        const resultText = "Расходы на аренду за " + years + " лет: " + Math.round(grandTotal).toLocaleString() + " руб";
+        document.getElementById("rentDetailOutput").innerHTML = `
+            <div><strong>Суммарная аренда за ${years} лет:</strong> ${Math.round(totalRent).toLocaleString()} руб</div>
+            <div><strong>Коммунальные + услуги:</strong> ${Math.round(totalUtils).toLocaleString()} руб</div>
+            <div><strong>Общие расходы:</strong> ${Math.round(grandTotal).toLocaleString()} руб</div>
+            <div class="verdict-card">При росте аренды ${growth}% ежегодно, через ${years} лет ежемесячный платёж вырастет до ~${Math.round(curRent).toLocaleString()} руб.</div>
+            <button class="share-btn" onclick="shareResult('${resultText.replace(/'/g, "\\'")}')">Поделиться результатом</button>
+        `;
+    }
+
+    function runComparison() {
+        const price = parseFloat(document.getElementById("price1").value);
+        const rent = parseFloat(document.getElementById("rent1").value);
+        const down = parseFloat(document.getElementById("downPayment").value);
+        const years = parseFloat(document.getElementById("yearsLoan").value);
+        const mRate = parseFloat(document.getElementById("rateLoan").value);
+        const dRate = parseFloat(document.getElementById("depositRate").value);
+        if (isNaN(price) || price <= 0 || isNaN(rent) || rent <= 0 || isNaN(down) || isNaN(years) || years <= 0 || isNaN(mRate) || isNaN(dRate)) {
+            document.getElementById("vsOutput").innerHTML = `<div class="empty-placeholder">Заполните все поля корректными числами</div>`;
+            return;
+        }
+        const loan = Math.max(0, price - down);
+        if (loan <= 0) {
+            document.getElementById("vsOutput").innerHTML = `<div class="empty-placeholder">Первоначальный взнос не может превышать стоимость квартиры</div>`;
+            return;
+        }
+        const payment = mortgagePayment(loan, mRate, years);
+        let depositAmount = down;
+        const monthlyDepositRate = dRate / 100 / 12;
+        for (let m = 1; m <= years * 12; m++) {
+            depositAmount -= rent;
+            depositAmount += (payment - rent);
+            depositAmount *= (1 + monthlyDepositRate);
+        }
+        const diffMonthly = payment - rent;
+        const msg = diffMonthly > 0 ? "Ипотека дороже на " + Math.round(diffMonthly).toLocaleString() + " руб/мес" : "Аренда дороже на " + Math.round(-diffMonthly).toLocaleString() + " руб/мес";
+        const diffCapital = price - depositAmount;
+        let verdict = diffCapital > 500000 ? "Ипотека выгоднее! Капитал выше на " + Math.abs(Math.round(diffCapital/1e3)).toLocaleString() + " тыс. руб." : (diffCapital < -500000 ? "Аренда выгоднее! Депозит принесёт на " + Math.abs(Math.round(diffCapital/1e3)).toLocaleString() + " тыс. руб. больше." : "Разница незначительна.");
+        const resultText = "Ипотека: " + Math.round(payment).toLocaleString() + " руб/мес, Аренда: " + rent.toLocaleString() + " руб/мес, " + msg;
+        document.getElementById("vsOutput").innerHTML = `<div><strong>Платёж по ипотеке:</strong> ${Math.round(payment).toLocaleString()} руб/мес</div><div><strong>Аренда:</strong> ${rent.toLocaleString()} руб/мес</div><div>${msg}</div><hr><div><strong>Капитал через ${years} лет (ипотека):</strong> ${Math.round(price/1e6).toLocaleString()} млн руб</div><div><strong>Капитал (аренда+депозит):</strong> ${Math.round(depositAmount/1e6).toLocaleString()} млн руб</div><div class="verdict-card">${verdict}</div><button class="share-btn" onclick="shareResult('${resultText.replace(/'/g, "\\'")}')">Поделиться результатом</button>`;
+    }
+    
+    function runYield() {
+        const price = parseFloat(document.getElementById("price2").value);
+        const rent = parseFloat(document.getElementById("rent2").value);
+        const growth = parseFloat(document.getElementById("yieldGrowth").value);
+        const exp = parseFloat(document.getElementById("expensesYear").value);
+        const years = parseFloat(document.getElementById("holdYears").value);
+        if (isNaN(price) || price <= 0 || isNaN(rent) || rent <= 0 || isNaN(growth) || isNaN(exp) || isNaN(years) || years <= 0) {
+            document.getElementById("yieldOutput").innerHTML = `<div class="empty-placeholder">Заполните все поля корректными числами</div>`;
+            return;
+        }
+        const growthRate = growth / 100;
+        let total = 0, cur = rent;
+        for (let i=0; i<years; i++) { total += cur * 12; cur *= (1+growthRate); }
+        const net = total - exp*years;
+        const roi = (net / price) * 100;
+        const payback = price / (net / years);
+        const resultText = "ROI: " + roi.toFixed(1) + "%, Чистая прибыль: " + Math.round(net).toLocaleString() + " руб, Окупаемость: ~" + payback.toFixed(1) + " лет";
+        document.getElementById("yieldOutput").innerHTML = `<div><strong>Чистая прибыль:</strong> ${Math.round(net).toLocaleString()} руб</div><div><strong>ROI:</strong> ${roi.toFixed(1)}%</div><div><strong>Окупаемость:</strong> ~${payback.toFixed(1)} лет</div><div class="verdict-card">Для сравнения: средняя ставка по вкладам ~13-14%</div><button class="share-btn" onclick="shareResult('${resultText.replace(/'/g, "\\'")}')">Поделиться результатом</button>`;
+    }
+    
+    function runTax() {
+        const cad = parseFloat(document.getElementById("cadastralPrice").value);
+        const inc = parseFloat(document.getElementById("rentalIncomeYear").value);
+        const propRate = parseFloat(document.getElementById("propTaxRate").value);
+        if (isNaN(cad) || cad <= 0 || isNaN(inc) || inc <= 0 || isNaN(propRate)) {
+            document.getElementById("taxOutput").innerHTML = `<div class="empty-placeholder">Заполните все поля корректными числами</div>`;
+            return;
+        }
+        const status = document.getElementById("taxStatus").value;
+        const propTaxRate = propRate / 100;
+        const propertyTax = cad * propTaxRate;
+        let incomeTax = status === "physical" ? inc * 0.13 : (status === "self" ? inc * 0.04 : inc * 0.06);
+        const resultText = "Налог на имущество: " + Math.round(propertyTax).toLocaleString() + " руб/год, Налог с аренды: " + Math.round(incomeTax).toLocaleString() + " руб/год";
+        document.getElementById("taxOutput").innerHTML = `<div><strong>Налог на имущество:</strong> ${Math.round(propertyTax).toLocaleString()} руб/год</div><div><strong>Налог с аренды:</strong> ${Math.round(incomeTax).toLocaleString()} руб/год</div><div><strong>Итого:</strong> ${Math.round(propertyTax + incomeTax).toLocaleString()} руб/год</div><button class="share-btn" onclick="shareResult('${resultText.replace(/'/g, "\\'")}')">Поделиться результатом</button>`;
+    }
+    
+    function renderCitiesTable() {
+        const budget = parseFloat(document.getElementById("budgetFilter").value);
+        let rows = Object.entries(citiesDB).map(([city, data]) => ({ city, price: data.price, rent: data.rent, yield: (data.rent*12/data.price)*100, inBudget: isNaN(budget) ? false : data.price <= budget }));
+        rows.sort((a,b)=>b.yield - a.yield);
+        if (rows.length === 0) {
+            document.getElementById("citiesTableBody").innerHTML = `<tr><td colspan="5" style="text-align:center">Ничего не найдено</td></tr>`;
+            return;
+        }
+        document.getElementById("citiesTableBody").innerHTML = rows.map(r => `<tr><td><strong>${r.city}</strong></td><td>${(r.price/1e6).toFixed(1)}</td><td>${r.rent.toLocaleString()}</td><td><span class="positive-bg">${r.yield.toFixed(1)}%</span></td><td>${isNaN(budget) ? "—" : (r.inBudget ? "да" : "нет")}</td></tr>`).join('');
+    }
+    
+    function renderTop() {
+        const arr = Object.entries(citiesDB).map(([city, data]) => ({ city, yield: (data.rent*12/data.price)*100, price: data.price, rent: data.rent })).sort((a,b)=>b.yield - a.yield).slice(0,9);
+        let html = `<div class="table-wrapper"><table class="city-table"><thead><tr><th>#</th><th>Город</th><th>Средняя цена (млн руб)</th><th>Средняя аренда (руб/мес)</th><th>Доходность</th></tr></thead><tbody>` + arr.map((c,i)=>`<tr><td>${i+1}</td><td><strong>${c.city}</strong></td><td>${(c.price/1e6).toFixed(1)}</td><td>${c.rent.toLocaleString()}</td><td><span class="positive-bg">${c.yield.toFixed(1)}%</span></td></tr>`).join('') + `</tbody></table></div><div class="verdict-card">Средние цены указаны для 1-комнатной квартиры в спальном районе</div>`;
+        document.getElementById("investTopOutput").innerHTML = html;
+    }
+    
+    function initFaqAccordion() {
+        document.querySelectorAll('.faq-item').forEach(item => {
+            const question = item.querySelector('.faq-question');
+            question.addEventListener('click', () => {
+                item.classList.toggle('active');
+            });
+        });
+    }
+    
+    function initTabs() {
+        document.querySelectorAll(".tab-btn").forEach(btn => {
+            btn.addEventListener("click", () => {
+                document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+                btn.classList.add("active");
+                document.querySelectorAll(".tab-content").forEach(t => t.classList.remove("active"));
+                document.getElementById(btn.dataset.tab).classList.add("active");
+                if (btn.dataset.tab === "tab4") renderCitiesTable();
+                if (btn.dataset.tab === "tab5") renderTop();
+            });
+        });
+    }
+    
+    window.shareResult = shareResult;
+    
+    populateSelects();
+    bindSelections();
+    initTabs();
+    initFaqAccordion();
+    renderCitiesTable();
+    renderTop();
+    
+    document.getElementById("calcMortDetail").onclick = runMortgageCalc;
+    document.getElementById("calcRentDetail").onclick = runRentDetail;
+    document.getElementById("calcVS").onclick = runComparison;
+    document.getElementById("calcYieldBtn").onclick = runYield;
+    document.getElementById("calcTaxBtn").onclick = runTax;
+    document.getElementById("budgetFilter").addEventListener("input", renderCitiesTable);
+</script>
+
+<!-- Яндекс.Метрика - замените XXXXXXXX на ваш номер счётчика -->
+<script>
+   (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)}; m[i].l=1*new Date(); for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }} k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym"); ym(109491698, "init", { clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true });
+</script>
+<noscript><div><img src="https://mc.yandex.ru/watch/109491698" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+</body>
+</html>
